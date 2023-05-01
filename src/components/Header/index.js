@@ -6,6 +6,7 @@ import CreateTraitModal from '../CreateTraitModal';
 import { useWeb3React } from '@web3-react/core';
 import { injected } from '../../connectors';
 import useContractStore from "../../store/useContractStore";
+import { Link } from 'react-router-dom';
 
 const Header = React.memo(() => {
     const [isOpen, setIsOpen] = useState(false);
@@ -15,7 +16,11 @@ const Header = React.memo(() => {
     return (
         <Navbar bg="light" expand="lg" style={{ marginBottom: 20 }}>
             <Container fluid>
-                <Navbar.Brand href="#">Trait Shop</Navbar.Brand>
+                <Link to='/' style={{ textDecoration: 'none' }}>
+                    <Navbar.Brand>
+                        Trait Shop
+                    </Navbar.Brand>
+                </Link>
                 <Navbar.Toggle aria-controls="navbarScroll" />
                 <div>
                     <Button onClick={() => active ? deactivate() : activate(injected)} variant="outline-success" style={{ marginRight: 10 }}>

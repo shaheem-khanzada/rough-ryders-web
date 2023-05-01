@@ -46,16 +46,21 @@ const TraitDetails = React.memo(() => {
         try {
             setLoading(LOADINGS.BUY_TRAIT_WITH_ETH, true);
 
+            const balance = await library.eth.getBalance(account);
+            const balanceInEther = library.utils.fromWei(balance, 'ether');
+
             const totalPrice = (trait.price * quantity).toString();
             const price = library.utils.toWei(totalPrice, 'ether');
 
-            const amountToBuy = quantity;
+            if (parseFloat(totalPrice) > parseFloat(balanceInEther)) {
+                throw new Error("You don't have enough balance")
+            }
 
             const payload = {
                 traitId: trait.tokenId,
                 sponsorAddress: trait.sponsor,
                 commissionPercentage: trait.commission,
-                quantity: amountToBuy,
+                quantity: quantity,
                 price: price,
                 signerAddress: account,
                 type: 'buyTraitWithETH'
@@ -66,7 +71,7 @@ const TraitDetails = React.memo(() => {
             const txPayload = [
                 trait.tokenId, 
                 trait.sponsor, 
-                amountToBuy, 
+                quantity, 
                 price, 
                 trait.commission, 
                 buyOnChain, 
@@ -123,11 +128,11 @@ const TraitDetails = React.memo(() => {
             const isTokenWhitelisted = await traitShopContract.methods.isTokenWhitelisted(erc20TokenAddress).call();
 
             if (!isTokenWhitelisted) {
-                throw Error({ message: `Token Address ${erc20TokenAddress} is not whitelisted` });
+                throw new Error(`Token Address ${erc20TokenAddress} is not whitelisted`);
             }
 
             if (!balanceBN.gte(priceBN)) {
-                throw Error({ message: "You don't have enough balance" })
+                throw new Error("You don't have enough balance")
             }
 
             const signPayload = {
@@ -169,9 +174,12 @@ const TraitDetails = React.memo(() => {
                 from: account,
             });
 
-            const buyTraitTx = await traitShopContract.methods.buyTraitWithERC20(...txPayload).call({
+            const buyTraitTx = await traitShopContract.methods.buyTraitWithERC20(...txPayload).send({
                 from: account,
             });
+
+            console.log('buyTraitTx:', buyTraitTx);
+
 
             if (!buyOnChain && buyTraitTx.transactionHash) {
                 await Apis.saveBuyOffChainTraitResult({
@@ -184,6 +192,7 @@ const TraitDetails = React.memo(() => {
             console.log('Transaction hash:', buyTraitTx.transactionHash);
 
         } catch (error) {
+            console.log('error', error);
             normalizeErrorMessage(error);
         } finally {
             setLoading(LOADINGS.BUY_TRAIT_WITH_ERC20, false);
