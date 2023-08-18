@@ -2,36 +2,31 @@ import axios from "axios"
 
 axios.defaults.baseURL = process.env.REACT_APP_BASE_URL;
 
-const fetchTraitSellListing = (walletAddress) => {
-    return axios.get(`/trait/list?walletAddress=${walletAddress}`);
+const fetchTweetJobs = () => {
+    return axios.get(`/tweet-jobs/list`);
 };
 
-const fetchSingleSellTrait = (id) => {
-    return axios.get(`/trait/id/${id}`)
-}
-
-const signMessage = (body) => {
-    return axios.post('/trait/sign', body);
-}
-
-const saveBuyOffChainTraitResult = (body) => {
-    return axios.post('/trait/purchase', body);
-}
-
-const deleteTraitSell = (id) => {
-    return axios.delete(`/trait/${id}`)
-}
-
-const createTraitSellListing = (payload) => {
-    return axios.post('/trait/sell', payload);
+const createTweetJob = (payload) => {
+    return axios.post('/tweet-jobs/create', payload);
 };
+
+const performTweetEngagement = (payload) => {
+    return axios.post('/tweet-jobs/perform-engagement', payload);
+}
+
+const getRewardWithdrawDetails = (wallet) => {
+    return axios.get(`/tweet-jobs/reward-withdraw-details?wallet=${wallet}`);
+}
+
+const getUserRewards = (wallet) => {
+    return axios.get(`/tweet-jobs/user-rewards?wallet=${wallet}`);
+}
 
 const Apis = {
-    fetchTraitSellListing,
-    createTraitSellListing,
-    fetchSingleSellTrait,
-    deleteTraitSell,
-    signMessage,
-    saveBuyOffChainTraitResult
+    fetchTweetJobs,
+    createTweetJob,
+    performTweetEngagement,
+    getRewardWithdrawDetails,
+    getUserRewards,
 }
 export { Apis }
