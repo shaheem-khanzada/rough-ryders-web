@@ -2,22 +2,23 @@ import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
-import CreateTweetJobModal from '../CreateTweetJobModal';
+import CreateTraitModal from '../CreateTraitModal';
 import { useWeb3React } from '@web3-react/core';
 import { injected } from '../../connectors';
-import { Link, useNavigate } from 'react-router-dom';
+import useContractStore from "../../store/useContractStore";
+import { Link } from 'react-router-dom';
 
 const Header = React.memo(() => {
     const [isOpen, setIsOpen] = useState(false);
-    const navigate = useNavigate();
     const { active, account, activate, deactivate } = useWeb3React()
+    const isAdmin = useContractStore((state) => state.isAdmin);
 
     return (
         <Navbar bg="light" expand="lg" style={{ marginBottom: 20 }}>
             <Container fluid>
                 <Link to='/' style={{ textDecoration: 'none' }}>
                     <Navbar.Brand>
-                        Tweet Reward System
+                        Trait Shop
                     </Navbar.Brand>
                 </Link>
                 <Navbar.Toggle aria-controls="navbarScroll" />
@@ -25,21 +26,15 @@ const Header = React.memo(() => {
                     <Button onClick={() => active ? deactivate() : activate(injected)} variant="outline-success" style={{ marginRight: 10 }}>
                         {active ? `Disconnect Wallet (${account})` : 'Connect Wallet'}
                     </Button>
-                    <Button
+                    {isAdmin ? <Button
                         variant="outline-success"
                         onClick={() => setIsOpen(true)}
                     >
-                        Create Tweet Engagement Job
-                    </Button>
-                    <Button
-                        variant="outline-success"
-                        onClick={() => navigate('/withdraw')}
-                    >
-                        Withdraw
-                    </Button>
+                        Create Trait Sell
+                    </Button> : null}
                 </div>
             </Container>
-            <CreateTweetJobModal
+            <CreateTraitModal
                 show={isOpen}
                 onHide={() => setIsOpen(false)}
             />

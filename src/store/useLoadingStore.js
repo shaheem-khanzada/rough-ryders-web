@@ -1,19 +1,21 @@
 import { create } from 'zustand';
 
 export const LOADINGS = {
-    PERFORM_TWEET_ENGAGEMENT: 'performTweetEngagement',
-    LOAD_TWEET_JOBS: 'loadTweetJobs',
-    CREATE_TWEET_JOB: 'createTweetJob',
-    WITHDRAW_REWARDS: 'withdrawRewards',
+    LOAD_DETAILS: 'loadDetails',
+    LOAD_TRAITS: 'loadTraits',
+    CREATE_TRAIT: 'createTrait',
+    DETELE_TRAIT: 'deleteTrait',
     BUY_TRAIT_WITH_ERC20: 'buyTraitWithERC20',
     BUY_TRAIT_WITH_ETH: 'buyTraitWithETH'
 }
 
 const useLoadingStore = create((set) => ({
-   performTweetEngagement: false,
-   createTweetJob: false,
-   withdrawRewards: false,
-   loadTweetJobs: false,
+   loadDetails: false,
+   createTrait: false,
+   deleteTrait: false,
+   loadTraits: false,
+   buyTraitWithERC20: false,
+   buyTraitWithETH: false,
    setLoading: (key, boolean) => {
     set({ [key]: boolean });
    }

@@ -1,10 +1,9 @@
 import { toast } from 'react-toastify';
 
 const normalizeErrorMessage = (error, customMessage) => {
-    const message =  error?.response?.data?.error || error?.response?.data?.message
-    if (message && typeof message === 'string') {
-        toast.error(message);
-    } else if (error?.message) {
+    const message = error?.response?.data?.message;
+    console.log(error);
+    if (error?.message) {
         toast.error(error?.message);
     } else if (customMessage) {
         toast.error(customMessage);

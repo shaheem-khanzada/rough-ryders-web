@@ -1,24 +1,26 @@
 import React, { useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
-import TweetJobListing from "../screens/TweetJobListing";
+import TraitListing from "../screens/TraitListing";
+import TraitDetails from "../screens/TraitDetails";
 import { useWeb3React } from '@web3-react/core';
+import useContractStore from "../store/useContractStore";
+import useTraitStore from "../store/useTraitStore";
 import { injected } from '../connectors';
-import useTweetApiStore from "../store/useTweetApiStore";
-import Withdraw from "../screens/Withdraw";
 
 
 const NavigationContainer = React.memo(() => {
   const { account, activate, library } = useWeb3React();
-  const { fetchTweetJobs } = useTweetApiStore((state) => ({
-    fetchTweetJobs: state.fetchTweetJobs, tweetJobs: state.tweetJobs
-  }))
+  const initTraitShopContract = useContractStore((state) => state.initTraitShopContract);
+  const fetchSellTraits = useTraitStore((state) => state.fetchSellTraits);
 
 
   useEffect(() => {
+    console.log('library', library);
     if (account) {
-      fetchTweetJobs(account);
+      initTraitShopContract(account, library);
+      fetchSellTraits(account);
     }
-  }, [fetchTweetJobs, account, library]);
+  }, [initTraitShopContract, fetchSellTraits, account, library]);
 
   useEffect(() => {
     activate(injected)
@@ -26,8 +28,8 @@ const NavigationContainer = React.memo(() => {
 
   return (
     <Routes>
-      <Route path="/" element={<TweetJobListing />} />
-      <Route path="/withdraw" element={<Withdraw />} />
+      <Route path="/" element={<TraitListing />} />
+      <Route path="detail/:id" element={<TraitDetails />} />
     </Routes>
   )
 });
