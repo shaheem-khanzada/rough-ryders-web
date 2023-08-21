@@ -5,11 +5,10 @@ import Navbar from 'react-bootstrap/Navbar';
 import CreateTweetJobModal from '../CreateTweetJobModal';
 import { useWeb3React } from '@web3-react/core';
 import { injected } from '../../connectors';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const Header = React.memo(() => {
     const [isOpen, setIsOpen] = useState(false);
-    const navigate = useNavigate();
     const { active, account, activate, deactivate } = useWeb3React()
 
     return (
@@ -30,12 +29,6 @@ const Header = React.memo(() => {
                         onClick={() => setIsOpen(true)}
                     >
                         Create Tweet Engagement Job
-                    </Button>
-                    <Button
-                        variant="outline-success"
-                        onClick={() => navigate('/withdraw')}
-                    >
-                        Withdraw
                     </Button>
                 </div>
             </Container>

@@ -4,15 +4,13 @@ import TweetJobListing from "../screens/TweetJobListing";
 import { useWeb3React } from '@web3-react/core';
 import { injected } from '../connectors';
 import useTweetApiStore from "../store/useTweetApiStore";
-import Withdraw from "../screens/Withdraw";
-
 
 const NavigationContainer = React.memo(() => {
   const { account, activate, library } = useWeb3React();
   const { fetchTweetJobs } = useTweetApiStore((state) => ({
-    fetchTweetJobs: state.fetchTweetJobs, tweetJobs: state.tweetJobs
+    fetchTweetJobs: state.fetchTweetJobs, 
+    tweetJobs: state.tweetJobs
   }))
-
 
   useEffect(() => {
     if (account) {
@@ -27,7 +25,6 @@ const NavigationContainer = React.memo(() => {
   return (
     <Routes>
       <Route path="/" element={<TweetJobListing />} />
-      <Route path="/withdraw" element={<Withdraw />} />
     </Routes>
   )
 });
