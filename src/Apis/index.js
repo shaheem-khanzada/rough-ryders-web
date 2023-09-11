@@ -14,19 +14,34 @@ const performTweetEngagement = (payload) => {
     return axios.post('/tweet-jobs/perform-engagement', payload);
 }
 
-const getRewardWithdrawDetails = (wallet) => {
-    return axios.get(`/tweet-jobs/reward-withdraw-details?wallet=${wallet}`);
+const claimAllRewards = (payload) => {
+    return axios.post('/tweet-jobs/claim-rewards', payload);
+}
+
+const cancelTweetJob = (payload) => {
+    return axios.post('/tweet-jobs/cancel-job', payload);
+}
+
+const getWithdrawDetails = (wallet, signature) => {
+    return axios.get(`/tweet-jobs/withdraw-details?wallet=${wallet}&signature=${signature}`);
 }
 
 const getUserRewards = (wallet) => {
     return axios.get(`/tweet-jobs/user-rewards?wallet=${wallet}`);
 }
 
+const getUserTokenBalance = (wallet) => {
+    return axios.get(`/tweet-jobs/user-balance?wallet=${wallet}`);
+}
+
 const Apis = {
     fetchTweetJobs,
     createTweetJob,
     performTweetEngagement,
-    getRewardWithdrawDetails,
+    getWithdrawDetails,
     getUserRewards,
+    claimAllRewards,
+    getUserTokenBalance,
+    cancelTweetJob
 }
 export { Apis }

@@ -2,9 +2,7 @@ import React, { useEffect } from 'react';
 import { Badge, Button, Container, ListGroup, ListGroupItem } from 'react-bootstrap';
 import { useWeb3React } from '@web3-react/core';
 import useTweetApiStore from '../../store/useTweetApiStore';
-import useContractStore from '../../store/useContractStore';
-import { normalizeErrorMessage } from '../../utils';
-import useLoadingStore, { LOADINGS } from '../../store/useLoadingStore';
+import useLoadingStore from '../../store/useLoadingStore';
 
 const status = {
     required_verification: 'Pending for verification',
@@ -19,37 +17,18 @@ const statusStyle = {
 }
 
 const Withdraw = React.memo(() => {
-    const { library, account } = useWeb3React();
-    const getTweetRewardSystemContract = useContractStore((state) => state.getTweetRewardSystemContract);
-    const { withdrawRewardsLoading, setLoading } = useLoadingStore((state) => ({
-        withdrawRewardsLoading: state.withdrawRewards,
-        setLoading: state.setLoading
+    const { account, library: web3 } = useWeb3React();
+    const { claimAllLoading } = useLoadingStore((state) => ({
+        claimAllLoading: state.claimAll,
     }));
 
-    const { getUserRewards, userRewards, getRewardWithdrawDetails, verifiedRewards } = useTweetApiStore((state) => ({
+    const { getUserRewards, userRewards, verifiedRewards, claimAllRewards } = useTweetApiStore((state) => ({
         getUserRewards: state.getUserRewards,
+        claimAllRewards: state.claimAllRewards,
         userRewards: state.userRewards,
         verifiedRewards: state.verifiedRewards,
-        getRewardWithdrawDetails: state.getRewardWithdrawDetails
+        getWithdrawDetails: state.getWithdrawDetails
     }));
-
-    const withdrawAll = async () => {
-        try {
-            setLoading(LOADINGS.WITHDRAW_REWARDS, true);
-            const { amounts, tokens, signature, timeOut } = await getRewardWithdrawDetails(account);
-            const tweetRewardSystemContract = await getTweetRewardSystemContract(library);
-            const { withdrawBatch } = tweetRewardSystemContract.methods;
-            await withdrawBatch(tokens, amounts, timeOut, signature).call({ from: account });
-            await withdrawBatch(tokens, amounts, timeOut, signature).send({ from: account });
-            setTimeout(() => {
-                getUserRewards(account);
-            }, 5000)
-        } catch (e) {
-            normalizeErrorMessage(e);
-        } finally {
-            setLoading(LOADINGS.WITHDRAW_REWARDS, false);
-        }
-    }
 
     useEffect(() => {
         if (account) {
@@ -57,13 +36,19 @@ const Withdraw = React.memo(() => {
         }
     }, [account, getUserRewards]);
 
+    const onSubmit = async () => {
+        const message = "I'am claiming my all rewards"
+        const signature = await web3.eth.personal.sign(message, account, '');
+        await claimAllRewards({ wallet: account, signature })
+    }
+
     return (
         <Container fluid>
             <ListGroup>
                 {userRewards.map((item, index) => (
                     <ListGroupItem key={index}>
                         <div>
-                            <strong>Reward Amount:</strong> {item.rewardAmount}
+                            <strong>Reward Amount:</strong> {item.rewardAmount} {item.rewardTokenSymbol}
                             <Badge
                                 style={{ marginLeft: 10, ...statusStyle[item.status] }}
                                 bg={'transparent'}
@@ -74,13 +59,16 @@ const Withdraw = React.memo(() => {
                         <div>
                             <strong>Reward Token Address:</strong> {item.rewardTokenAddress}
                         </div>
-                        <div>
-                            <strong>Reward Token Type:</strong> {item.rewardTokenType}
-                        </div>
                     </ListGroupItem>
                 ))}
             </ListGroup>
-            <Button disabled={verifiedRewards.length === 0 || withdrawRewardsLoading} className='mt-3' onClick={withdrawAll}>{withdrawRewardsLoading ? "Loading..." : "Withdraw All Claimable"}</Button>
+            <Button
+                disabled={verifiedRewards.length === 0 || claimAllLoading}
+                className='mt-3'
+                onClick={onSubmit}
+            >
+                {claimAllLoading ? "Loading..." : "Claim All Rewards"}
+            </Button>
         </Container>
     )
 });

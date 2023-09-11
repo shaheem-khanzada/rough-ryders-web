@@ -9,25 +9,25 @@ import useLoadingStore from "../../store/useLoadingStore";
 
 const PerformJobModal = React.memo((props) => {
     const { handleSubmit, register } = useForm();
+    const { account, library: web3 } = useWeb3React();
     const performTweetEngagementLoading = useLoadingStore((state) => state.performTweetEngagement);
-    const { tweetJob, performTweetEngagement } = useTweetApiStore((state) => ({
+    const { tweetJob, performTweetEngagement, getUserRewards } = useTweetApiStore((state) => ({
         tweetJob: state.tweetJob,
+        getUserRewards: state.getUserRewards,
         performTweetEngagement: state.performTweetEngagement
     }));
 
-    const { account } = useWeb3React();
-
-    console.log('performTweetEngagementLoading', performTweetEngagementLoading);
-
-
     const onSubmit = async (data) => {
+        const message = "I'am performing engagement job"
+        const signature = await web3.eth.personal.sign(message, account, '');
         const payload = {
             ...data,
             engager: account,
-            tweetJobId: tweetJob._id
+            tweetJobId: tweetJob._id,
+            signature
         }
-        console.log('payload', payload);
         await performTweetEngagement(payload)
+        await getUserRewards(account)
         props?.onHide();
     };
 

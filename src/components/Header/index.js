@@ -6,9 +6,11 @@ import CreateTweetJobModal from '../CreateTweetJobModal';
 import { useWeb3React } from '@web3-react/core';
 import { injected } from '../../connectors';
 import { Link } from 'react-router-dom';
+import DepositModal from '../DepositModal';
 
 const Header = React.memo(() => {
     const [isOpen, setIsOpen] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const { active, account, activate, deactivate } = useWeb3React()
 
     return (
@@ -30,8 +32,18 @@ const Header = React.memo(() => {
                     >
                         Create Tweet Engagement Job
                     </Button>
+                    <Button
+                        variant="outline-success"
+                        onClick={() => setIsModalOpen(true)}
+                    >
+                        Deposit
+                    </Button>
                 </div>
             </Container>
+            <DepositModal
+                show={isModalOpen}
+                onHide={() => setIsModalOpen(false)}
+            />
             <CreateTweetJobModal
                 show={isOpen}
                 onHide={() => setIsOpen(false)}

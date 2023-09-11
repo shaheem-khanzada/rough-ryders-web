@@ -4,12 +4,16 @@ import { useWeb3React } from '@web3-react/core';
 import useTweetApiStore from '../../store/useTweetApiStore';
 import PerformJobModal from '../../components/PerformJobModal';
 import Withdraw from '../Withdraw';
+import Balance from '../Balance';
+import useLoadingStore from '../../store/useLoadingStore';
 
 const TweetJobListing = React.memo(() => {
-    const { account } = useWeb3React();
+    const { account, library: web3 } = useWeb3React();
     const [modalShow, setModalVisiblity] = useState(false);
-    const { tweetJobs, setTweetjob } = useTweetApiStore((state) => ({
+    const { cancelTweetJobLoading } = useLoadingStore((state) => ({ cancelTweetJobLoading: state.cancelTweetJob }))
+    const { tweetJobs, cancelTweetJob, setTweetjob } = useTweetApiStore((state) => ({
         tweetJobs: state.tweetJobs,
+        cancelTweetJob: state.cancelTweetJob,
         setTweetjob: state.setTweetjob
     }))
 
@@ -17,6 +21,18 @@ const TweetJobListing = React.memo(() => {
         setTweetjob(item);
         setModalVisiblity(true);
     };
+
+    const onSubmit = async (id) => {
+        const message = "I'am cancelling engagement job";
+        const signature = await web3.eth.personal.sign(message, account, '');
+        const payload = {
+            id,
+            signature,
+        }
+        const response = await cancelTweetJob(payload);
+        console.log('payload', payload);
+        console.log('response', response);
+    }
 
     return (
         <Container fluid>
@@ -49,12 +65,15 @@ const TweetJobListing = React.memo(() => {
                                     <strong>Reward Token Address:</strong> {item.rewardTokenAddress}
                                 </div>
                                 <div>
-                                    <strong>Reward Token Type:</strong> {item.rewardTokenType}
+                                    <strong>Reward Token Symbol:</strong> {item.rewardTokenSymbol}
                                 </div>
                                 <div>
                                     <strong>Reward Per Engagement:</strong> {item.rewardPerEngagement}
                                 </div>
-                                <Button className='mt-3' onClick={() => handlePerformJob(item)}>Perform Job</Button>
+                                <Button style={{ marginRight: 5 }} className='mt-3' onClick={() => handlePerformJob(item)}>Perform Job</Button>
+                                {item.creator === account ? <Button disabled={cancelTweetJobLoading} variant='danger' className='mt-3' onClick={() => onSubmit(item._id)}>
+                                    {cancelTweetJobLoading ? 'Loading...' : 'Cancel Job'}
+                                </Button> : null}
                             </ListGroupItem>
                         ))}
                     </ListGroup>
@@ -62,6 +81,10 @@ const TweetJobListing = React.memo(() => {
                 <Col>
                     <h1>Rewards</h1>
                     <Withdraw />
+                </Col>
+                <Col>
+                    <h1>Balance</h1>
+                    <Balance />
                 </Col>
             </Row>
             <PerformJobModal show={modalShow} onHide={() => setModalVisiblity(false)} />

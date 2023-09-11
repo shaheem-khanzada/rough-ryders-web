@@ -6,7 +6,7 @@ import Erc20TokenAbi from '../contracts/ERC20_Contract_Abi.json'
 const useContractStore = create((set) => ({
   traitShopContract: null,
   erc20TokenContract: null,
-  getERC20TokenContractInstance: async (tokenAddress, web3) => {
+  getERC20TokenContractInstance: (tokenAddress, web3) => {
     try {
       const erc20TokenContract = new web3.eth.Contract(
         Erc20TokenAbi,
@@ -14,10 +14,11 @@ const useContractStore = create((set) => ({
       );
       return erc20TokenContract;
     } catch (e) {
+      console.log('error getERC20TokenContractInstance', e)
       normalizeErrorMessage(e);
     }
   },
-  getTweetRewardSystemContract: async (web3) => {
+  getTweetRewardSystemContract: (web3) => {
     try {
       const tweetRewardSystemContract = new web3.eth.Contract(
         TweetRewardSystem.abi,
@@ -25,10 +26,10 @@ const useContractStore = create((set) => ({
       );
       return tweetRewardSystemContract;
     } catch (e) {
+      console.log('error getTweetRewardSystemContract', e)
       normalizeErrorMessage(e);
     }
   },
-
 }));
 
 export default useContractStore;
