@@ -83,7 +83,7 @@ const CreateTweetJobModal = (props) => {
         throw new Error(`Total reward amount must be greater than zero`);
      }
 
-     const message = "I'am creating engagement job"
+     const message = "I am creating engagement job"
      const signature = await web3.eth.personal.sign(message, account, '');
 
       const jobPayload = {

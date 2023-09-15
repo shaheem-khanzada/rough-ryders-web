@@ -23,7 +23,7 @@ const TweetJobListing = React.memo(() => {
     };
 
     const onSubmit = async (id) => {
-        const message = "I'am cancelling engagement job";
+        const message = "I am cancelling engagement job";
         const signature = await web3.eth.personal.sign(message, account, '');
         const payload = {
             id,

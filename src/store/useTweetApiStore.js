@@ -111,7 +111,7 @@ const useTweetApiStore = create((set, get) => ({
     const setLoading = useLoadingStore.getState().setLoading;
     try {
         setLoading(LOADINGS.WITHDRAW_REWARDS, true);
-        const message = "I'am collecting withdraw details"
+        const message = "I am collecting withdraw details"
         console.log('message', message);
         const signSignature = await web3.eth.personal.sign(message, account, '');
 

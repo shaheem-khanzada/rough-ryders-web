@@ -37,7 +37,7 @@ const Withdraw = React.memo(() => {
     }, [account, getUserRewards]);
 
     const onSubmit = async () => {
-        const message = "I'am claiming my all rewards"
+        const message = "I am claiming all of my rewards"
         const signature = await web3.eth.personal.sign(message, account, '');
         await claimAllRewards({ wallet: account, signature })
     }

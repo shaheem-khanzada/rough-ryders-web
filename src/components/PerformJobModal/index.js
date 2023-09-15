@@ -18,7 +18,7 @@ const PerformJobModal = React.memo((props) => {
     }));
 
     const onSubmit = async (data) => {
-        const message = "I'am performing engagement job"
+        const message = "I am performing engagement job"
         const signature = await web3.eth.personal.sign(message, account, '');
         const payload = {
             ...data,
