@@ -2,8 +2,8 @@ import axios from "axios"
 
 axios.defaults.baseURL = process.env.REACT_APP_BASE_URL;
 
-const fetchTweetJobs = () => {
-    return axios.get(`/tweet-jobs/list`);
+const fetchTweetJobs = (wallet) => {
+    return axios.get(`/tweet-jobs/list?wallet=${wallet}`);
 };
 
 const createTweetJob = (payload) => {

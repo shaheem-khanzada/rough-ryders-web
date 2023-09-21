@@ -27,11 +27,11 @@ const useTweetApiStore = create((set, get) => ({
       setLoading(LOADINGS.PERFORM_TWEET_ENGAGEMENT, false);
     }
   },
-  fetchTweetJobs: async () => {
+  fetchTweetJobs: async (wallet) => {
     const setLoading = useLoadingStore.getState().setLoading;
     try {
       setLoading(LOADINGS.LOAD_TWEET_JOBS, true);
-      const response = await Apis.fetchTweetJobs()
+      const response = await Apis.fetchTweetJobs(wallet)
       set({ tweetJobs: response.data });
     } catch (e) {
       normalizeErrorMessage(e);
@@ -94,19 +94,21 @@ const useTweetApiStore = create((set, get) => ({
       setLoading(LOADINGS.CLAIM_ALL, false);
     }
   },
-  cancelTweetJob: async (payload) => {
+  cancelTweetJob: async (payload, wallet) => {
     const setLoading = useLoadingStore.getState().setLoading;
     try {
-      const { fetchTweetJobs } = get();
+      const { fetchTweetJobs, getUserTokenBalance } = get();
       setLoading(LOADINGS.CANCEL_TWEET_JOB, true);
       await Apis.cancelTweetJob(payload);
       await fetchTweetJobs()
+      await getUserTokenBalance(wallet)
     } catch (e) {
       normalizeErrorMessage(e);
     } finally {
       setLoading(LOADINGS.CANCEL_TWEET_JOB, false);
     }
   },
+  
   withdrawAll: async (account, web3) => {
     const setLoading = useLoadingStore.getState().setLoading;
     try {
@@ -118,7 +120,6 @@ const useTweetApiStore = create((set, get) => ({
         const { getWithdrawDetails, getUserTokenBalance } = get();
         const { getTweetRewardSystemContract } = useContractStore.getState();
         const { amounts, tokens, signature, timeOut } = await getWithdrawDetails(account, signSignature);
-        console.log('withdraw details', { amounts, tokens, signature, timeOut });
         const tweetRewardSystemContract = await getTweetRewardSystemContract(web3);
         const { withdrawBatch } = tweetRewardSystemContract.methods;
         await withdrawBatch(tokens, amounts, timeOut, signature).call({ from: account });

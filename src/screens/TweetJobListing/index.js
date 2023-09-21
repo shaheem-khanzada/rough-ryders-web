@@ -29,7 +29,7 @@ const TweetJobListing = React.memo(() => {
             id,
             signature,
         }
-        const response = await cancelTweetJob(payload);
+        const response = await cancelTweetJob(payload, account);
         console.log('payload', payload);
         console.log('response', response);
     }
@@ -53,6 +53,15 @@ const TweetJobListing = React.memo(() => {
                                         </Badge> : null}
                                 </div>
                                 <div>
+                                    {item.userIsEngaged ?
+                                        <Badge
+                                            style={{ marginLeft: 10 }}
+                                            variant="primary"
+                                        >
+                                            Already Participated
+                                        </Badge> : null}
+                                </div>
+                                <div>
                                     <strong>Username:</strong> {item.username}
                                 </div>
                                 <div>
@@ -70,7 +79,7 @@ const TweetJobListing = React.memo(() => {
                                 <div>
                                     <strong>Reward Per Engagement:</strong> {item.rewardPerEngagement}
                                 </div>
-                                <Button style={{ marginRight: 5 }} className='mt-3' onClick={() => handlePerformJob(item)}>Perform Job</Button>
+                                <Button disabled={item.userIsEngaged} style={{ marginRight: 5 }} className='mt-3' onClick={() => handlePerformJob(item)}>Perform Job</Button>
                                 {item.creator === account ? <Button disabled={cancelTweetJobLoading} variant='danger' className='mt-3' onClick={() => onSubmit(item._id)}>
                                     {cancelTweetJobLoading ? 'Loading...' : 'Cancel Job'}
                                 </Button> : null}

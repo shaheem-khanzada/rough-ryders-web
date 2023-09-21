@@ -96,14 +96,13 @@ const CreateTweetJobModal = (props) => {
         rewardPerEngagement,
         totalEngagementCount,
         engagementType,
-        status: 'active',
         creator: account
       }
 
       console.log('createTweetJob data', jobPayload);
 
-      const { data } = await createTweetJob(jobPayload);
-      console.log('createTweetJob data', data);
+      const response = await createTweetJob(jobPayload);
+      console.log('createTweetJob data', response);
       await fetchTweetJobs()
       await getUserTokenBalance(account)
       onHide()
