@@ -32,7 +32,7 @@ const useTweetApiStore = create((set, get) => ({
     try {
       setLoading(LOADINGS.LOAD_TWEET_JOBS, true);
       const response = await Apis.fetchTweetJobs(wallet)
-      set({ tweetJobs: response.data });
+      set({ tweetJobs: response.data.jobs });
     } catch (e) {
       normalizeErrorMessage(e);
     } finally {

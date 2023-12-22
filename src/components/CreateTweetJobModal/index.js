@@ -45,7 +45,7 @@ const CreateTweetJobModal = (props) => {
   });
   const engagementType = useWatch({
     control,
-    defaultValue: 'like',
+    defaultValue: 'LIKE',
     name: "engagementType",
   });
   const totalEngagementCount = useWatch({
@@ -83,11 +83,11 @@ const CreateTweetJobModal = (props) => {
         throw new Error(`Total reward amount must be greater than zero`);
      }
 
-     const message = "I am creating engagement job"
+     const message = "I am creating an engagement quest"
      const signature = await web3.eth.personal.sign(message, account, '');
 
       const jobPayload = {
-        signature,
+        creator: account,
         totalRewardAmount,
         rewardTokenAddress: tokenDetails.tokenAddress,
         rewardTokenSymbol: tokenDetails.tokenSymbol,
@@ -96,8 +96,10 @@ const CreateTweetJobModal = (props) => {
         rewardPerEngagement,
         totalEngagementCount,
         engagementType,
-        creator: account
+        feeRecipient: '0x2Cf6BE9AaC1c7630d5A23af88c28275C70eb8819',
+        signature
       }
+
 
       console.log('createTweetJob data', jobPayload);
 
@@ -151,10 +153,10 @@ const CreateTweetJobModal = (props) => {
             <Controller
               name="engagementType"
               control={control}
-              defaultValue="like"
+              defaultValue="LIKE"
               render={({ field: { onChange, value } }) => (
                 <GroupButton
-                  item={['like', 'retweet', 'comment']}
+                  item={['LIKE', 'RETWEET', 'REPLY']}
                   onChange={(value) => {
                     onChange(value);
                   }}

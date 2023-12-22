@@ -79,6 +79,9 @@ const TweetJobListing = React.memo(() => {
                                 <div>
                                     <strong>Reward Per Engagement:</strong> {item.rewardPerEngagement}
                                 </div>
+                                <div>
+                                    <strong>Job Number:</strong> {item.jobNumber}
+                                </div>
                                 <Button disabled={item.userIsEngaged} style={{ marginRight: 5 }} className='mt-3' onClick={() => handlePerformJob(item)}>Perform Job</Button>
                                 {item.creator === account ? <Button disabled={cancelTweetJobLoading} variant='danger' className='mt-3' onClick={() => onSubmit(item._id)}>
                                     {cancelTweetJobLoading ? 'Loading...' : 'Cancel Job'}
