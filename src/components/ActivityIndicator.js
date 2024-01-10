@@ -7,10 +7,10 @@ const ActivityIndicator = () => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        height: '90vh',
+        height: '55vh',
       }}
     >
-      <Spinner animation="border" role="status">
+      <Spinner style={{ color: '#f4e8bb' }} animation="border" role="status">
         <span className="visually-hidden">Loading...</span>
       </Spinner>
     </div>

@@ -5,6 +5,8 @@ import useRoughRydersStore from '../../store/useRoughRydersStore';
 import useCountdownTimer from '../../hooks/useCountdownTimer';
 import { useState } from 'react';
 import ClaimRewardModal from '../../components/ClaimRewardModal';
+import useLoadingStore from '../../store/useLoadingStore';
+import ActivityIndicator from '../../components/ActivityIndicator';
 
 const Item = ({ nft }) => {
     const { timeDifference, timerEnded } = useCountdownTimer(nft.startDate);
@@ -52,9 +54,15 @@ const Item = ({ nft }) => {
 
 const Home = React.memo(() => {
     const { nfts } = useRoughRydersStore();
+    const loading = useLoadingStore((state) => state.loadNftList)
 
     const renderItems = () => {
-        if (Array.isArray(nfts) && nfts.length) {
+        if (loading) {
+            return (
+                <ActivityIndicator />
+            )
+        }
+        else if (Array.isArray(nfts) && nfts.length) {
             return (
                 nfts.map((item, key) => (
                     <Col key={key} xs={12} sm={12} md={6} lg={6} xl={4}>

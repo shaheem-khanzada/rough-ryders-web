@@ -22,14 +22,9 @@ const ClaimRewardModal = React.memo(({ nft, show, onHide }) => {
 
     const claimReward = async () => {
         try {
-            await claimNftReward({
-                nftId: nft._id,
-                rewardTokenId: rewardToken._id,
-                wallet: account
-            })
-        } catch (e) {
-            
-        }
+            const payload = { nftId: nft._id, rewardTokenId: rewardToken._id, wallet: account };
+            await claimNftReward(payload, onHide);
+        } catch {}
     }
 
     const calculateAmount = useCallback(async () => {
@@ -63,73 +58,73 @@ const ClaimRewardModal = React.memo(({ nft, show, onHide }) => {
 
     return (
         <Modal
-        size="lg"
-        show={show}
-        onHide={onHide}
-        centered
-        aria-labelledby="example-modal-sizes-title-lg"
-        className='shadow-lg modal-'
-    >
-        <Modal.Header>
-            <Modal.Title id="example-modal-sizes-title-lg" className='mx-auto'>
-                <h5 style={{ fontWeight: 700, color: '#f4e8bb' }}><span style={{ backgroundColor: '#f4e8bb', padding: 5, color: '#412828' }}>Ryders</span> Reward</h5>
+            size="lg"
+            show={show}
+            onHide={onHide}
+            centered
+            aria-labelledby="example-modal-sizes-title-lg"
+            className='shadow-lg modal-'
+        >
+            <Modal.Header>
+                <Modal.Title id="example-modal-sizes-title-lg" className='mx-auto'>
+                    <h5 style={{ fontWeight: 700, color: '#f4e8bb' }}><span style={{ backgroundColor: '#f4e8bb', padding: 5, color: '#412828' }}>Ryders</span> Reward</h5>
 
-            </Modal.Title>
-            <CloseButton onClick={onHide} variant='white' />
-        </Modal.Header>
-        <Modal.Body style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                </Modal.Title>
+                <CloseButton onClick={onHide} variant='white' />
+            </Modal.Header>
+            <Modal.Body style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
 
-            <h5 className='text-center mb-3'>Select one of these coin to get reward</h5>
-            <ButtonGroup style={{ display: 'flex' }}>
-                {rewardTokens.map((radio, idx) => (
-                    <ToggleButton
-                        key={idx}
-                        id={`radio-${idx}`}
-                        type="radio"
-                        variant={idx % 2 ? 'outline-warning' : 'outline-warning'}
-                        name="radio"
-                        value={radio._id}
-                        checked={rewardToken?._id === radio._id}
-                        onChange={() => setRewardToken(rewardTokens[idx])}
-                        style={{
-                            borderColor: '#f4e8bb',
-                            color: rewardToken?._id === radio._id ? '#412828' : '#f4e8bb',
-                            backgroundColor: rewardToken?._id === radio._id ? '#f4e8bb' : 'transparent',
-                        }}
-                    >
-                        {radio.symbol}
-                    </ToggleButton>
-                ))}
-            </ButtonGroup>
+                <h5 className='text-center mb-3'>Select one of these coin to get reward</h5>
+                <ButtonGroup style={{ display: 'flex' }}>
+                    {rewardTokens.map((radio, idx) => (
+                        <ToggleButton
+                            key={idx}
+                            id={`radio-${idx}`}
+                            type="radio"
+                            variant={idx % 2 ? 'outline-warning' : 'outline-warning'}
+                            name="radio"
+                            value={radio._id}
+                            checked={rewardToken?._id === radio._id}
+                            onChange={() => setRewardToken(rewardTokens[idx])}
+                            style={{
+                                borderColor: '#f4e8bb',
+                                color: rewardToken?._id === radio._id ? '#412828' : '#f4e8bb',
+                                backgroundColor: rewardToken?._id === radio._id ? '#f4e8bb' : 'transparent',
+                            }}
+                        >
+                            {radio.symbol}
+                        </ToggleButton>
+                    ))}
+                </ButtonGroup>
 
-            <div>
-                {loading && (
-                    <Spinner animation="border" role="status" className="mt-4 mx-auto d-flex flex-column align-items-center">
-                        <span className="sr-only"></span>
-                    </Spinner>
-                )}
+                <div>
+                    {loading && (
+                        <Spinner animation="border" role="status" className="mt-4 mx-auto d-flex flex-column align-items-center">
+                            <span className="sr-only"></span>
+                        </Spinner>
+                    )}
 
-                {calculatedRewardAmount && !loading && (
-                    <h2 className="mt-4 d-flex justify-content-center">Reward Amount: {calculatedRewardAmount} {rewardToken.symbol}</h2>
-                )}
-                {errorMessage && !loading && (
-                    <div className="text-danger mt-2 text-center">
-                        {errorMessage}
-                    </div>
-                )}
-            </div>
-        </Modal.Body>
-        <Modal.Footer className='d-flex flex-column'>
-            <Button
-                disabled={errorMessage || loading}
-                className='mx-auto theme-btn'
-                variant="warning"
-                onClick={claimReward}
-            >
-                {claimNftRewardLoading ? "Loading..." : "Claim Now"}
-            </Button>
-        </Modal.Footer>
-    </Modal>
+                    {calculatedRewardAmount && !loading && (
+                        <h2 className="mt-4 d-flex justify-content-center">Reward Amount: {calculatedRewardAmount} {rewardToken.symbol}</h2>
+                    )}
+                    {errorMessage && !loading && (
+                        <div className="text-danger mt-2 text-center">
+                            {errorMessage}
+                        </div>
+                    )}
+                </div>
+            </Modal.Body>
+            <Modal.Footer className='d-flex flex-column'>
+                <Button
+                    disabled={errorMessage || loading}
+                    className='mx-auto theme-btn'
+                    variant="warning"
+                    onClick={claimReward}
+                >
+                    {claimNftRewardLoading ? "Loading..." : "Claim Now"}
+                </Button>
+            </Modal.Footer>
+        </Modal>
     );
 });
 export default ClaimRewardModal

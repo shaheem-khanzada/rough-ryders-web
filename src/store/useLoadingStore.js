@@ -17,7 +17,7 @@ const useLoadingStore = create((set) => ({
    claimNftReward: false,
    deposit: false,
    withdrawRewards: false,
-   loadNftList: false,
+   loadNftList: true,
    setLoading: (key, boolean) => {
     set({ [key]: boolean });
    }
