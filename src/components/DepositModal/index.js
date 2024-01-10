@@ -11,13 +11,6 @@ import { useWeb3React } from "@web3-react/core";
 import { CloseButton } from "react-bootstrap";
 import useRoughRydersStore from "../../store/useRoughRydersStore";
 
-
-
-const tokens = [
-    '0x7169D38820dfd117C3FA1f22a697dBA58d90BA06', // USDT TEST
-    '0x116C9f97aC74e3c087D43515C951c1be8c72d411' // METH TEST
-]
-
 const colourStyles = {
     control: (base, state) => ({
         ...base,
@@ -113,7 +106,6 @@ const DepositModal = React.memo((props) => {
             const tweetRewardSystemContract = getRoughRydersContract(web3);
 
             let dAmount = await handleERC20TokenDepositValidation(tweetRewardSystemContract);
-            console.log('dAmount', dAmount);
 
             const transaction = await handleFinalTokenDeposit(dAmount, tweetRewardSystemContract);
             console.log('transaction', transaction);
@@ -127,27 +119,17 @@ const DepositModal = React.memo((props) => {
     };
 
     const handleERC20TokenDepositValidation = async () => {
-        console.log('selectedOption', selectedOption)
         const { methods: { allowance, balanceOf, approve } } = await getERC20TokenContractInstance(selectedOption.address, web3);
         const tokenDecimals = selectedOption.tokenDecimal;
-        console.log('tokenDecimals', tokenDecimals);
         const priceInTokens = new Decimal(depositAmount).times(new Decimal(10).pow(tokenDecimals)).toFixed(0);
-        console.log('priceInTokens', priceInTokens);
 
         const priceBN = web3.utils.toBN(priceInTokens);
-        console.log('priceBN', priceBN);
 
         const spenderAddress = process.env.REACT_APP_ROUGH_RYDERS_ADDRESS;
-        console.log('spenderAddress', spenderAddress);
 
         const tokenAllowance = await allowance(account, spenderAddress).call();
-        console.log('tokenAllowance???', tokenAllowance);
 
         const allowanceBN = web3.utils.toBN(tokenAllowance);
-        console.log('allowanceBN.isZero', allowanceBN.isZero());
-        console.log('allowanceBN', allowanceBN);
-
-
         const balance = await balanceOf(account).call();
         const balanceBN = web3.utils.toBN(balance);
 
