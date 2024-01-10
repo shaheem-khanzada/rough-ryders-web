@@ -8,7 +8,50 @@ import useLoadingStore, { LOADINGS } from "../../store/useLoadingStore";
 import { normalizeErrorMessage } from "../../utils";
 import useContractStore from "../../store/useContractStore";
 import { useWeb3React } from "@web3-react/core";
-import useTweetApiStore from "../../store/useTweetApiStore";
+import { CloseButton } from "react-bootstrap";
+import useRoughRydersStore from "../../store/useRoughRydersStore";
+
+
+
+const tokens = [
+    '0x7169D38820dfd117C3FA1f22a697dBA58d90BA06', // USDT TEST
+    '0x116C9f97aC74e3c087D43515C951c1be8c72d411' // METH TEST
+]
+
+const colourStyles = {
+    control: (base, state) => ({
+        ...base,
+        background: "#f4e8bb",
+        // match with the menu
+
+        // Overwrittes the different states of border
+        borderColor: state.isFocused ? "#f4e8bb" : "green",
+        // Removes weird border around container
+        boxShadow: state.isFocused ? null : null,
+        "&:hover": {
+            // Overwrittes the different states of border
+            borderColor: state.isFocused ? "#f4e8bb" : "f4e8bb"
+        }
+    }),
+    menuList: styles => ({
+        ...styles,
+        background: '#412828'
+    }),
+    option: (styles, { isFocused, isSelected }) => ({
+        ...styles,
+        background: isFocused
+            ? '#ccc197'
+            : isSelected
+                ? '#f4e8bb'
+                : '#f4e8bb',
+        zIndex: 1
+    }),
+    menu: base => ({
+        ...base,
+        zIndex: 100,
+        background: 'black'
+    })
+}
 
 const DepositModal = React.memo((props) => {
     const { onHide } = props;
@@ -17,15 +60,15 @@ const DepositModal = React.memo((props) => {
     const [depositAmount, setDepositAmount] = useState(0);
     const [isLoading, setLoading] = useState(false);
     const { library: web3, account } = useWeb3React();
-    const { depositLoading, setDepositLoading } = useLoadingStore((state) => ({ 
+    const { depositLoading, setDepositLoading } = useLoadingStore((state) => ({
         depositLoading: state.deposit,
         setDepositLoading: state.setLoading
-     }));
-    const { getERC20TokenContractInstance, getTweetRewardSystemContract } = useContractStore((state) => ({
-        getERC20TokenContractInstance: state.getERC20TokenContractInstance,
-        getTweetRewardSystemContract: state.getTweetRewardSystemContract
     }));
-    const { getUserTokenBalance } = useTweetApiStore((state) => ({ getUserTokenBalance: state.getUserTokenBalance }))
+    const { getERC20TokenContractInstance, getRoughRydersContract } = useContractStore((state) => ({
+        getERC20TokenContractInstance: state.getERC20TokenContractInstance,
+        getRoughRydersContract: state.getRoughRydersContract
+    }));
+    const rewardTokens = useRoughRydersStore((state) => state.rewardTokens)
 
     const hasDecimal = (value) => {
         const strValue = String(value);
@@ -37,25 +80,29 @@ const DepositModal = React.memo((props) => {
     }
 
     const fetchTokens = useCallback(async () => {
-        setLoading(true)
-        const { methods: { getWhiteListedTokens } } = getTweetRewardSystemContract(web3);
-        const whitelistedTokens = await getWhiteListedTokens().call();
-        const balance = await web3.eth.getBalance(account);
-        const balanceInEther = web3.utils.fromWei(balance, 'ether');
-        const options = [{ balance: parseFloat(balanceInEther).toFixed(3), symbol: 'ETH' }]
+        try {
+            setLoading(true)
+            const options = []
 
-        for (let i = 0; i < whitelistedTokens.length; i++) {
-            const token = whitelistedTokens[i];
-            const { methods: { decimals, balanceOf, symbol } } = getERC20TokenContractInstance(token, web3);
-            const tokenDecimal = Number(await decimals().call())
-            const tokenSymbol = await symbol().call();
-            const balanceWei = await balanceOf(account).call();
-            const balance = parseFloat(balanceWei) / 10 ** tokenDecimal;
-            options.push({ balance: hasDecimal(balance), symbol: tokenSymbol, tokenDecimal, address: token })
+            for (let i = 0; i < rewardTokens.length; i++) {
+                const token = rewardTokens[i];
+                const { methods: { balanceOf } } = getERC20TokenContractInstance(token.address, web3);
+                const balanceWei = await balanceOf(account).call();
+                const balance = parseFloat(balanceWei) / 10 ** token.decimal;
+                options.push({
+                    balance: hasDecimal(balance),
+                    symbol: token.symbol,
+                    tokenDecimal: token.decimal,
+                    address: token.address,
+                    ...token
+                })
+            }
+            setOptions(options.map((token) => ({ value: token.balance, label: `${token.symbol} - ${token.balance}`, ...token })))
+            setLoading(false)
+        } catch (e) {
+          console.log('error fetchTokens', e);
         }
-        setOptions(options.map((token) => ({ value: token.balance, label: `${token.symbol} - ${token.balance}`, ...token })))
-        setLoading(false)
-    }, [account, getERC20TokenContractInstance, getTweetRewardSystemContract, web3])
+    }, [account, getERC20TokenContractInstance, rewardTokens, web3])
 
     const onSumit = async () => {
         try {
@@ -63,20 +110,13 @@ const DepositModal = React.memo((props) => {
             if (Number(depositAmount) <= 0) {
                 return normalizeErrorMessage('Amount must be greater than 0')
             }
-            const tweetRewardSystemContract = getTweetRewardSystemContract(web3);
+            const tweetRewardSystemContract = getRoughRydersContract(web3);
 
-            let dAmount = 0
-            if (selectedOption.symbol === 'ETH') {
-                dAmount = await handleNativeTokenDepositValidation(tweetRewardSystemContract);
-            } else {
-                dAmount = await handleERC20TokenDepositValidation(tweetRewardSystemContract);
-            }
-
+            let dAmount = await handleERC20TokenDepositValidation(tweetRewardSystemContract);
             console.log('dAmount', dAmount);
 
             const transaction = await handleFinalTokenDeposit(dAmount, tweetRewardSystemContract);
             console.log('transaction', transaction);
-            setTimeout(() => getUserTokenBalance(account), 5000)
             onHide()
         } catch (e) {
             console.log('error', e);
@@ -86,36 +126,27 @@ const DepositModal = React.memo((props) => {
         }
     };
 
-    const handleNativeTokenDepositValidation = async (tweetRewardSystemContract) => {
-        const { depositETH } = tweetRewardSystemContract.methods;
-        const balance = await web3.eth.getBalance(account);
-        const balanceInEther = web3.utils.fromWei(balance, 'ether');
-        const price = web3.utils.toWei(depositAmount, 'ether');
-
-        if (depositAmount > parseFloat(balanceInEther)) {
-            throw new Error("You don't have enough ETH balance");
-        }
-
-        await depositETH().call({
-            from: account,
-            value: price,
-        });
-        return price;
-    };
-
-    const handleERC20TokenDepositValidation = async (tweetRewardSystemContract) => {
-        const { depositERC20 } = tweetRewardSystemContract.methods;
-
-        const { methods: { allowance, balanceOf, decimals, approve } } = await getERC20TokenContractInstance(selectedOption.address, web3);
-        const tokenDecimals = Number(await decimals().call());
+    const handleERC20TokenDepositValidation = async () => {
+        console.log('selectedOption', selectedOption)
+        const { methods: { allowance, balanceOf, approve } } = await getERC20TokenContractInstance(selectedOption.address, web3);
+        const tokenDecimals = selectedOption.tokenDecimal;
+        console.log('tokenDecimals', tokenDecimals);
         const priceInTokens = new Decimal(depositAmount).times(new Decimal(10).pow(tokenDecimals)).toFixed(0);
+        console.log('priceInTokens', priceInTokens);
 
         const priceBN = web3.utils.toBN(priceInTokens);
+        console.log('priceBN', priceBN);
 
-        const spenderAddress = process.env.REACT_APP_TWEET_REWARD_SYSTEM_ADDRESS;
+        const spenderAddress = process.env.REACT_APP_ROUGH_RYDERS_ADDRESS;
+        console.log('spenderAddress', spenderAddress);
+
         const tokenAllowance = await allowance(account, spenderAddress).call();
-     
+        console.log('tokenAllowance???', tokenAllowance);
+
         const allowanceBN = web3.utils.toBN(tokenAllowance);
+        console.log('allowanceBN.isZero', allowanceBN.isZero());
+        console.log('allowanceBN', allowanceBN);
+
 
         const balance = await balanceOf(account).call();
         const balanceBN = web3.utils.toBN(balance);
@@ -124,26 +155,27 @@ const DepositModal = React.memo((props) => {
             throw new Error("You don't have enough balance")
         }
 
+
         if (allowanceBN.lt(priceBN)) {
+            console.log('running')
+            if (selectedOption.symbol === 'USDT' && !allowanceBN.isZero()) {
+                await approve(spenderAddress, 0).send({ from: account });
+            }
             await approve(spenderAddress, priceInTokens).send({ from: account });
         }
 
         const staticPayload = [selectedOption.address, priceInTokens];
+        console.log('staticPayload', staticPayload)
 
-        await depositERC20(...staticPayload).call({
-            from: account,
-        });
+        // await depositERC20(...staticPayload).call({
+        //     from: account,
+        // });
         return priceInTokens;
     };
 
     const handleFinalTokenDeposit = async (tokenPrice, tweetRewardSystemContract) => {
-        const { depositETH, depositERC20 } = tweetRewardSystemContract.methods;
-
-        if (selectedOption.symbol === 'ETH') {
-            return depositETH().send({ from: account, value: tokenPrice });
-        } else {
-            return depositERC20(selectedOption.address, tokenPrice).send({ from: account });
-        }
+        const { depositERC20 } = tweetRewardSystemContract.methods;
+        return depositERC20(selectedOption.address, tokenPrice).send({ from: account });
     };
 
     useEffect(() => {
@@ -161,22 +193,25 @@ const DepositModal = React.memo((props) => {
     return (
         <Modal
             {...props}
-            size="lg"
+            size="md"
             aria-labelledby="contained-modal-title-vcenter"
             centered
+            className="modal-deposit"
         >
-            <Modal.Header closeButton>
-                <Modal.Title id="contained-modal-title-vcenter">
-                    Deposit Token
+            <Modal.Header>
+                <Modal.Title id="example-modal-sizes-title-lg" className='mx-auto'>
+                    <h5 style={{ fontWeight: 700, color: '#f4e8bb' }}><span style={{ backgroundColor: '#f4e8bb', padding: 5, color: '#412828' }}>Deposit</span> Token</h5>
                 </Modal.Title>
+                <CloseButton onClick={onHide} variant='white' />
             </Modal.Header>
             <Modal.Body>
                 <Form onSubmit={() => { }}>
                     <Form.Group className="mb-3 d-flex flex-column" controlId="coinSelect">
                         <Form.Label>Select Token</Form.Label>
                         <Select
-                            className="basic-single"
+                            className="basic-single text-black"
                             classNamePrefix="select"
+                            styles={colourStyles}
                             isLoading={isLoading}
                             isClearable
                             isSearchable
@@ -186,7 +221,7 @@ const DepositModal = React.memo((props) => {
                         />
                     </Form.Group>
                     {selectedOption?.value ? <Form.Group className="mb-3" controlId="rewardPerEngagement">
-                        <Form.Label>Total Balance</Form.Label>
+                        <Form.Label>Deposit Amount</Form.Label>
                         <Form.Control
                             type="number"
                             step="any"
@@ -195,16 +230,17 @@ const DepositModal = React.memo((props) => {
                             value={depositAmount}
                             onChange={(e) => setDepositAmount(e.target.value)}
                             placeholder="Enter Reward Per Engagement"
+                            style={{ backgroundColor: '#f4e8bb', color: '#412828' }}
                         />
                     </Form.Group> : null}
 
-                    <Button disabled={depositLoading} variant="primary" onClick={onSumit} style={{ marginTop: 15 }}>
-                       {depositLoading ? 'Loading...' : 'Deposit'}
-                    </Button>
+
                 </Form>
             </Modal.Body>
             <Modal.Footer>
-                <Button onClick={onHide}>Close</Button>
+                <Button disabled={depositLoading} className="mx-auto theme-btn" variant="warning" onClick={onSumit} >
+                    {depositLoading ? 'Loading...' : 'Deposit Now'}
+                </Button>
             </Modal.Footer>
         </Modal>
     )

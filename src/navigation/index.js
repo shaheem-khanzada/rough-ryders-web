@@ -1,22 +1,27 @@
 import React, { useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
-import TweetJobListing from "../screens/TweetJobListing";
+import Home from "../screens/Home";
 import { useWeb3React } from '@web3-react/core';
 import { injected } from '../connectors';
-import useTweetApiStore from "../store/useTweetApiStore";
+import useRoughRydersStore from "../store/useRoughRydersStore";
 
 const NavigationContainer = React.memo(() => {
   const { account, activate, library } = useWeb3React();
-  const { fetchTweetJobs } = useTweetApiStore((state) => ({
-    fetchTweetJobs: state.fetchTweetJobs, 
+  const { fetchNftList, fetchUserBalance, fetchRewardTokens  } = useRoughRydersStore((state) => ({
+    fetchNftList: state.fetchNftList,
+    fetchUserBalance: state.fetchUserBalance,
+    fetchRewardTokens: state.fetchRewardTokens,
     tweetJobs: state.tweetJobs
   }))
+ 
 
   useEffect(() => {
     if (account) {
-      fetchTweetJobs(account);
+      fetchNftList(account);
+      fetchUserBalance(account);
+      fetchRewardTokens(account);
     }
-  }, [fetchTweetJobs, account, library]);
+  }, [fetchNftList, fetchUserBalance, fetchRewardTokens, account, library]);
 
   useEffect(() => {
     activate(injected)
@@ -24,7 +29,7 @@ const NavigationContainer = React.memo(() => {
 
   return (
     <Routes>
-      <Route path="/" element={<TweetJobListing />} />
+      <Route path="/" element={<Home />} />
     </Routes>
   )
 });

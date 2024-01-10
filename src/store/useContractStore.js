@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { normalizeErrorMessage } from '../utils';
-import TweetRewardSystem from '../contracts/TweetRewardSystem.json'
+import RoughRyders from '../contracts/RoughRyders.json'
 import Erc20TokenAbi from '../contracts/ERC20_Contract_Abi.json'
 
 const useContractStore = create((set) => ({
@@ -18,15 +18,15 @@ const useContractStore = create((set) => ({
       normalizeErrorMessage(e);
     }
   },
-  getTweetRewardSystemContract: (web3) => {
+  getRoughRydersContract: (web3) => {
     try {
-      const tweetRewardSystemContract = new web3.eth.Contract(
-        TweetRewardSystem.abi,
-        process.env.REACT_APP_TWEET_REWARD_SYSTEM_ADDRESS,
+      const roughRydersContract = new web3.eth.Contract(
+        RoughRyders.abi,
+        process.env.REACT_APP_ROUGH_RYDERS_ADDRESS,
       );
-      return tweetRewardSystemContract;
+      return roughRydersContract;
     } catch (e) {
-      console.log('error getTweetRewardSystemContract', e)
+      console.log('error getRoughRydersContract', e)
       normalizeErrorMessage(e);
     }
   },

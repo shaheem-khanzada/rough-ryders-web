@@ -2,46 +2,31 @@ import axios from "axios"
 
 axios.defaults.baseURL = process.env.REACT_APP_BASE_URL;
 
-const fetchTweetJobs = (wallet) => {
-    return axios.get(`/tweet-jobs/list?wallet=${wallet}`);
+const fetchNftList = (wallet) => {
+    return axios.get(`/rough-ryders/list?wallet=${wallet}`);
 };
 
-const createTweetJob = (payload) => {
-    return axios.post('/tweet-jobs/create', payload);
+const calculateNftReward = (body) => {
+    return axios.post('/rough-ryders/calculate-reward', body);
 };
 
-const performTweetEngagement = (payload) => {
-    return axios.post('/tweet-jobs/perform-engagement', payload);
+const fetchUserBalance = (wallet) => {
+    return axios.get(`/rough-ryders/user-balance?wallet=${wallet}`)
 }
 
-const claimAllRewards = (payload) => {
-    return axios.post('/tweet-jobs/claim-rewards', payload);
+const fetchRewardTokens = () => {
+    return axios.get('/rough-ryders/reward-tokens')
 }
 
-const cancelTweetJob = (payload) => {
-    return axios.post('/tweet-jobs/cancel-job', payload);
-}
-
-const getWithdrawDetails = (wallet, signature) => {
-    return axios.get(`/tweet-jobs/withdraw-details?wallet=${wallet}&signature=${signature}`);
-}
-
-const getUserRewards = (wallet) => {
-    return axios.get(`/tweet-jobs/user-rewards?wallet=${wallet}`);
-}
-
-const getUserTokenBalance = (wallet) => {
-    return axios.get(`/tweet-jobs/user-balance?wallet=${wallet}`);
+const claimNftReward = (body) => {
+    return axios.post('/rough-ryders/claim-nft-reward', body)
 }
 
 const Apis = {
-    fetchTweetJobs,
-    createTweetJob,
-    performTweetEngagement,
-    getWithdrawDetails,
-    getUserRewards,
-    claimAllRewards,
-    getUserTokenBalance,
-    cancelTweetJob
+    fetchNftList,
+    calculateNftReward,
+    fetchUserBalance,
+    fetchRewardTokens,
+    claimNftReward
 }
 export { Apis }

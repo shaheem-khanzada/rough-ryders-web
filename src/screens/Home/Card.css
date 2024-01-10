@@ -1,0 +1,286 @@
+
+.nft-img {
+	transition: transform 0.3s ease-in-out !important;
+}
+
+
+/* .Card {
+	max-width: 400px;
+	background: #15263f;
+	display: flex;
+	flex-direction: column;
+	color: white;
+	padding: 10px 10px 0px 10px;
+	box-shadow: 0px 25px 50px rgba(0, 0, 0, 0.0952917);
+	border-radius: 15px;
+	font-size: 18px;
+	background-size: cover;
+	justify-content: end;
+	height: 500px;
+	margin-top: 100px;
+}
+
+.banner {
+	width: 100%;
+	border-radius: 8px;
+	margin-bottom: 24px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	position: relative;
+}
+
+.equi {
+	width: 100%;
+}
+
+.banner div {
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background: hsla(178, 100%, 50%, 0.5);
+	mix-blend-mode: normal;
+	border-radius: 8px;
+	opacity: 0;
+}
+
+.banner div:hover {
+	opacity: 1;
+}
+
+.view {
+	opacity: 1;
+}
+
+.title {
+	font-size: 22px;
+	font-weight: 600;
+	margin-bottom: 16px;
+}
+
+.description {
+	font-weight: 300;
+}
+
+.timer {
+	font-size: 22px;
+	font-weight: 700;
+	margin-top: 7px;
+}
+
+.action-buttons {
+	display: flex;
+	justify-content: space-evenly;
+}
+
+.left p {
+	font-weight: 600;
+	font-size: 16px;
+	line-height: 20px;
+	color: #00fff8;
+}
+
+.line {
+	width: 100%;
+	border: 1px solid var(--line);
+}
+
+.author {
+	margin-top: 16px;
+	display: flex;
+	flex-direction: row;
+	font-style: normal;
+	font-weight: 400;
+	font-size: 16px;
+	line-height: 20px;
+	align-items: center;
+	gap: 16px;
+}
+
+.avatar {
+	border: 1px solid #8bacd9;
+	border-radius: 50%;
+	width: 33px;
+}
+
+.author-link,
+.title {
+	text-decoration: none;
+	color: inherit;
+}
+
+.author-link:hover,
+.title:hover,
+.banner div {
+	cursor: pointer;
+	color: var(--Cyan);
+} */
+
+.btn-custom-warning-outline-btn {
+	color: #ffc008 !important;
+	background-color: transparent !important;
+	border-color: #ffc008 !important;
+}
+
+.btn-custom-warning-outline-btn:hover,
+.btn-custom-warning-outline-btn:active {
+    color: black !important;
+    background-color: #ffc008 !important;
+    border-color: #ffc008 !important;
+}
+
+.modal-content{
+	background-color: #412828 !important;
+	color: #f4e8bb !important;
+}
+.modal-claim{
+	margin-top: 220px;
+}
+
+.modal-header{
+	border-bottom: var(--bs-modal-header-border-width) solid #525252 !important;
+}
+.modal-footer{
+	border-top: var(--bs-modal-header-border-width) solid #525252 !important;
+}
+
+.modal-header .btn-close {
+	margin-left:0px !important ;
+}
+
+
+.Card {
+	padding: 0;
+	margin: 0;
+	max-width: 500px;
+	background: #f4e8bb;
+	display: flex;
+	flex-direction: column;
+	color: #412828;
+	box-shadow: 0px 25px 50px rgba(0, 0, 0, 0.0952917);
+	border-radius: 15px;
+	font-size: 18px;
+	margin-bottom: 25px;
+	margin-top: 25px;
+	transition: transform 0.3s ease-in-out;
+}
+
+.banner {
+	width: 100%;
+	border-radius: 8px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	position: relative;
+}
+
+.equi {
+	width: 100%;
+}
+
+.banner div {
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background: hsla(178, 100%, 50%, 0.5);
+	mix-blend-mode: normal;
+	border-radius: 8px;
+	opacity: 0;
+}
+
+.banner div:hover {
+	opacity: 1;
+}
+
+.view {
+	opacity: 1;
+}
+
+.title {
+	font-size: 22px;
+	font-weight: 600;
+	margin-bottom: 16px;
+}
+
+.description {
+	font-weight: 600;
+	margin-bottom: 24px;
+}
+
+.group-4 {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	margin-bottom: 24px;
+}
+
+.left,
+.right {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 7px;
+}
+.left p {
+	font-weight: 600;
+	font-size: 16px;
+	line-height: 20px;
+}
+
+.line {
+	width: 100%;
+	border: 1px solid var(--line);
+}
+
+.author {
+	margin-top: 16px;
+	display: flex;
+	flex-direction: row;
+	font-style: normal;
+	font-weight: 400;
+	font-size: 16px;
+	line-height: 20px;
+	align-items: center;
+	gap: 16px;
+}
+
+.avatar {
+	border: 1px solid #8bacd9;
+	border-radius: 50%;
+	width: 33px;
+}
+
+.author-link,
+.title {
+	text-decoration: none;
+	color: inherit;
+}
+
+.author-link:hover,
+.title:hover,
+.banner div {
+	cursor: pointer;
+	color: var(--Cyan);
+}
+
+.timer-bg{
+	background-color: #412828;
+	color: #f4e8bb;
+}
+
+.timer{
+	font-weight: 700;
+	padding: 8px;
+}
+
+.Card:hover{
+	transform: scale(1.05);
+}

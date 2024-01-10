@@ -1,11 +1,17 @@
 {
-  "contractName": "TweetRewardSystem",
+  "contractName": "RoughRyders",
+  "contractAddress": "0x1837A489C6d70a4278f02505F619836Ad6430458",
   "abi": [
     {
       "inputs": [
         {
           "internalType": "address",
           "name": "_signer",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_usdtTokenAddress",
           "type": "address"
         }
       ],
@@ -88,6 +94,19 @@
         {
           "indexed": false,
           "internalType": "address",
+          "name": "newUsdtTokenAddress",
+          "type": "address"
+        }
+      ],
+      "name": "UsdtTokenAddressUpdated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
           "name": "token",
           "type": "address"
         },
@@ -135,12 +154,12 @@
     {
       "inputs": [
         {
-          "internalType": "address",
-          "name": "_token",
-          "type": "address"
+          "internalType": "address[]",
+          "name": "_tokens",
+          "type": "address[]"
         }
       ],
-      "name": "addToken",
+      "name": "batchAddWhitelistedTokens",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -308,6 +327,26 @@
       "inputs": [
         {
           "internalType": "address",
+          "name": "_usdtTokenAddress",
+          "type": "address"
+        }
+      ],
+      "name": "setUsdtTokenAddress",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "toggleUseOnlyWhitelistedTokens",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
           "name": "newOwner",
           "type": "address"
         }
@@ -315,6 +354,32 @@
       "name": "transferOwnership",
       "outputs": [],
       "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "usdtTokenAddress",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "useOnlyWhitelistedTokens",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
       "type": "function"
     },
     {

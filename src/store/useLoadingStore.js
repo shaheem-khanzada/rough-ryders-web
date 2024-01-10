@@ -1,10 +1,10 @@
 import { create } from 'zustand';
 
 export const LOADINGS = {
-    PERFORM_TWEET_ENGAGEMENT: 'performTweetEngagement',
-    CLAIM_ALL: 'claimAll',
+    CALCULATE_REWARDS: 'calculateRewards',
+    CLAIM_NFT_REWARD: 'claimNftReward',
     CANCEL_TWEET_JOB: 'cancelTweetJob',
-    LOAD_TWEET_JOBS: 'loadTweetJobs',
+    LOAD_NFT_LIST: 'loadNftList',
     CREATE_TWEET_JOB: 'createTweetJob',
     DEPOSIT: 'deposit',
     WITHDRAW_REWARDS: 'withdrawRewards',
@@ -13,13 +13,11 @@ export const LOADINGS = {
 }
 
 const useLoadingStore = create((set) => ({
-   performTweetEngagement: false,
-   claimAll: false,
-   cancelTweetJob: false,
+   calculateRewards: false,
+   claimNftReward: false,
    deposit: false,
-   createTweetJob: false,
    withdrawRewards: false,
-   loadTweetJobs: false,
+   loadNftList: false,
    setLoading: (key, boolean) => {
     set({ [key]: boolean });
    }
